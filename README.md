@@ -1,1 +1,2 @@
-# Project
+#Kop munka
+öntöző rendszer arduinóval.
