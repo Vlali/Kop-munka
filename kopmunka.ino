@@ -16,8 +16,12 @@ DallasTemperature sensors(&oneWire);// Pass our oneWire reference to Dallas Temp
 
 int moisturenumber=A5;    //szenzorok számai
 int lightnumber=A4;
+int gomb;
+int gomb2;
+int gomb3;
 int gombnumber=7;        //gombok
 int gomb2number=9;
+int gomb3number=11;
 int hangszoro=6;
 int motor=10;
 int fhiba;   //fény    // szenzorhibak,hogyha nem megfelelő értéket adnak vissza,akkor az értékük 1es lesz
@@ -27,9 +31,9 @@ int mhiba;   // moisture,föld víztartalma
 int vhiba;   // víz hőmérséklete 
 int allapot=0; // Az lcd-én épp melyik értéket jelenítem meg,gombnyomással nő az értéke 2ig,után kinullázódik.Ha hibajelzés van nincs módunk tovább lépni.
 int hang=100;  //Hangszóró értéke
-int kesleltetes=20;
 int case_value;
 int a;
+int szenzorok;
 
 void hibak(){
  
@@ -110,12 +114,47 @@ void setup(){
   Serial.begin(9600);
   sensors.begin();   
   pinMode(hangszoro,OUTPUT);                //hangszóró
+  pinMode(gomb3number,INPUT_PULLUP);
   pinMode(gomb2number,INPUT_PULLUP);         //hang gomb
   pinMode(gombnumber,INPUT_PULLUP);         //lcd változtatása
   pinMode(motor,OUTPUT);}              //relé
 
 
 void loop(){
+  gomb3=digitalRead(gomb3number);   //a gombbal variálom hogy a szenzorok be e legyenek kapcsolva
+  if (gomb3==0){
+    if (szenzorok==0){
+      szenzorok=1;}
+    else if (szenzorok==1){
+      szenzorok=0;                   //ha kezi vezerlesen van torolje ki az lcdeken levo adatokat,es ne szoljon a hangszoro
+      lcd1.clear();
+      lcd2.clear();
+      noTone(hangszoro);}}
+  
+  
+  
+  if (szenzorok==0){
+  int motorvezerlogomb=digitalRead(gombnumber);   //a gombbal variálom hogy a motor be  e legyen kapcsolva
+  int motorbekapcsolva;
+  lcd1.write("kezi vezerles");
+  if (motorvezerlogomb==0){
+    lcd2.clear();                   // mivel atlesz irv az lcd hogy menjen e vagy sem
+    if (motorbekapcsolva==0){
+      motorbekapcsolva=1;}          // hogy a motor be e van kapcsolva,gombbal aligatom az ahhoz tartozo variablet
+    else if (motorbekapcsolva==1){
+      motorbekapcsolva=0;}}
+
+  switch (motorbekapcsolva){  
+  case 0:
+  digitalWrite(motor,LOW);
+  lcd2.write("motor bekapcsolva");
+  break;
+  case 1:
+  digitalWrite(motor,HIGH);
+  lcd2.write("motor kikapcsolva");
+  break;
+  }}
+  else if (szenzorok==1){             // mejnenek a szenzorok
   int chk = DHT11.read(DHT11_PIN);
   sensors.requestTemperatures();
   float vizh=sensors.getTempCByIndex(0);
@@ -370,11 +409,8 @@ int  gomb=digitalRead(gombnumber);   //a gombbal variálom az állapotokat.
     if (allapot==0){
       allapot=1;}
     else if (allapot==1){
-      allapot=2;}
-    else if (allapot==2){
-      allapot=3;}
-    else if (allapot==3){
       allapot=0;}}
+   
   
  
   if (allapot==0 && fhiba==0 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){     //csak akkor érvényesül ha nincs szükség a hibajelzésre.
@@ -389,17 +425,12 @@ int  gomb=digitalRead(gombnumber);   //a gombbal variálom az állapotokat.
    lcd1.print("Humidity:");
    lcd1.print(paratartalom);
    lcd1.print("%");
-   delay(kesleltetes);}
-  
-  if (allapot==1 && fhiba==0 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
-   
-   lcd1.setCursor(0,0);
+   lcd1.setCursor(0,2);
    lcd1.print("Fenyerosseg:");
-   lcd1.setCursor(0,1);
-   lcd1.print(light);
-   delay(kesleltetes);}
-
-  if (allapot==2 && fhiba==0 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
+   lcd1.setCursor(0,3);
+   lcd1.print(light);}
+  
+  else if (allapot==1 && fhiba==0 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
  
     lcd1.setCursor(0,0);
     lcd1.print("Viztartalom");
@@ -408,6 +439,6 @@ int  gomb=digitalRead(gombnumber);   //a gombbal variálom az állapotokat.
     lcd1.setCursor(0,1);
     lcd1.print("Vizho");
     lcd1.setCursor(11,1);
-    lcd1.print(vizh);
-    delay(kesleltetes);}}
+    lcd1.print(vizh);}}}
+  
  
