@@ -30,12 +30,13 @@ int hhiba;   //külső hőmérséklet
 int mhiba;   // moisture,föld víztartalma
 int vhiba;   // víz hőmérséklete 
 int allapot=0; // Az lcd-én épp melyik értéket jelenítem meg,gombnyomással nő az értéke 2ig,után kinullázódik.Ha hibajelzés van nincs módunk tovább lépni.
-int hang=100;  //Hangszóró értéke
+int hang=0;  //Hangszóró értéke
 int case_value;
 int a;
 int szenzorok=1;
 int motorbekapcsolva=1;
-
+int green=52;
+int red=53;
 void hibak(){
  
  a=case_value;
@@ -118,7 +119,9 @@ void setup(){
   pinMode(gomb3number,INPUT_PULLUP);
   pinMode(gomb2number,INPUT_PULLUP);         //hang gomb
   pinMode(gombnumber,INPUT_PULLUP);         //lcd változtatása
-  pinMode(motor,OUTPUT);}              //relé
+  pinMode(motor,OUTPUT); //relé
+  pinMode(green,OUTPUT);
+  pinMode(red,OUTPUT);}
 
 
 void loop(){
@@ -153,6 +156,10 @@ void loop(){
   lcd2.print("motor");
   lcd2.setCursor(0,1);
   lcd2.print("bekapcsolva");
+  digitalWrite(red,LOW);
+  digitalWrite(green,HIGH);
+  
+  
   }
   else if (motorbekapcsolva==1){
   digitalWrite(motor,HIGH);
@@ -160,6 +167,8 @@ void loop(){
   lcd2.print("motor");
    lcd2.setCursor(0,1);
   lcd2.print("kikapcsolva");
+  digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
   }
   delay(200);}
   
@@ -185,7 +194,7 @@ void loop(){
     else if (hang==100){
       hang=0;}}
   
-  if (light<900){                         // ha nem megfelelő az érték,akkor a hibánál 1es lesz
+  if (light<980){                         // ha nem megfelelő az érték,akkor a hibánál 1es lesz
     fhiba=0;}
   else{fhiba=1;}
 
@@ -218,7 +227,9 @@ void loop(){
     lcd2.print(light);
     if (hang==0){noTone(hangszoro);}          
     else{tone(hangszoro,hang);}
-    digitalWrite(motor,HIGH);               
+    digitalWrite(motor,HIGH);
+    digitalWrite(green,LOW);
+    digitalWrite(red,HIGH);
    
     break;
   
@@ -231,7 +242,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-  
+    digitalWrite(green,LOW);
+    digitalWrite(red,HIGH);
      break; 
   
     case 2:
@@ -243,7 +255,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-   
+     digitalWrite(green,LOW);
+    digitalWrite(red,HIGH);
      break; 
   
   
@@ -256,7 +269,9 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,LOW);
-    
+      digitalWrite(red,LOW);
+      digitalWrite(green,HIGH);
+  
      break; 
   
     case 4:
@@ -268,7 +283,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-   
+     digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
   
     case 5:
@@ -280,7 +296,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-     
+       digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
   
     case 6:
@@ -292,7 +309,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-    
+      digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
   
     case 7:
@@ -304,7 +322,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-   
+     digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
   
     case 8:
@@ -316,7 +335,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-  
+    digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
   
     case 9:
@@ -328,7 +348,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-     
+       digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
 
     case 10:
@@ -340,7 +361,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-   
+     digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
     break; 
   
     case 11:
@@ -352,7 +374,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-   
+     digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
     break; 
   
     case 12:
@@ -364,7 +387,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
- 
+   digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
     break; 
   
     case 13:
@@ -376,7 +400,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-   
+     digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
     break; 
   
     case 14:
@@ -388,7 +413,8 @@ void loop(){
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
     digitalWrite(motor,HIGH);
-    
+      digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
   
     case 15:
@@ -399,7 +425,8 @@ void loop(){
     lcd2.print("megfelelo");
     noTone(hangszoro);
     digitalWrite(motor,HIGH);
-     
+       digitalWrite(green,LOW);
+  digitalWrite(red,HIGH);
      break; 
     
     case 16:
@@ -410,8 +437,10 @@ void loop(){
     lcd2.print("nem megfelelo!");
     if (hang==0){noTone(hangszoro);}
     else{tone(hangszoro,hang);}
-    digitalWrite(motor,LOW);
-   
+    digitalWrite(motor,HIGH);
+     digitalWrite(green,LOW);
+     digitalWrite(red,HIGH);
+  
     break; 
     
   }
@@ -453,6 +482,12 @@ int  gomb=digitalRead(gombnumber);   //a gombbal variálom az állapotokat.
     lcd1.setCursor(0,1);
     lcd1.print("Vizho");
     lcd1.setCursor(11,1);
-    lcd1.print(vizh);}}}
-  
- 
+    lcd1.print(vizh);
+    lcd1.setCursor(0,2);
+    lcd1.print("hangszoro");
+    lcd1.setCursor(0,3);
+    if (hang==0){
+      lcd1.print("kikapcsolva");}
+    else{
+      lcd1.print("bekapcsolva");}
+      }}}
