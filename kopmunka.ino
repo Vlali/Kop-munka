@@ -21,7 +21,7 @@ int gomb2;
 int gomb3;
 int gombnumber=7;        //gombok
 int gomb2number=9;
-int gomb3number=11;
+int gomb3number=8;
 int hangszoro=6;
 int motor=10;
 int fhiba;   //fény    // szenzorhibak,hogyha nem megfelelő értéket adnak vissza,akkor az értékük 1es lesz
@@ -33,7 +33,8 @@ int allapot=0; // Az lcd-én épp melyik értéket jelenítem meg,gombnyomással
 int hang=100;  //Hangszóró értéke
 int case_value;
 int a;
-int szenzorok;
+int szenzorok=1;
+int motorbekapcsolva=1;
 
 void hibak(){
  
@@ -123,38 +124,51 @@ void setup(){
 void loop(){
   gomb3=digitalRead(gomb3number);   //a gombbal variálom hogy a szenzorok be e legyenek kapcsolva
   if (gomb3==0){
+  lcd1.clear();
+   lcd2.clear();
     if (szenzorok==0){
       szenzorok=1;}
     else if (szenzorok==1){
       szenzorok=0;                   //ha kezi vezerlesen van torolje ki az lcdeken levo adatokat,es ne szoljon a hangszoro
-      lcd1.clear();
-      lcd2.clear();
-      noTone(hangszoro);}}
+      }}
   
   
   
-  if (szenzorok==0){
+  if(szenzorok==0){
+  
+  noTone(hangszoro);
   int motorvezerlogomb=digitalRead(gombnumber);   //a gombbal variálom hogy a motor be  e legyen kapcsolva
-  int motorbekapcsolva;
-  lcd1.write("kezi vezerles");
+  lcd1.setCursor(0,0);
+  lcd1.print("kezi vezerles");
   if (motorvezerlogomb==0){
-    lcd2.clear();                   // mivel atlesz irv az lcd hogy menjen e vagy sem
+    lcd2.clear();               // mivel atlesz irv az lcd hogy menjen e vagy sem
     if (motorbekapcsolva==0){
       motorbekapcsolva=1;}          // hogy a motor be e van kapcsolva,gombbal aligatom az ahhoz tartozo variablet
     else if (motorbekapcsolva==1){
       motorbekapcsolva=0;}}
 
-  switch (motorbekapcsolva){  
-  case 0:
+  if (motorbekapcsolva==0){  
   digitalWrite(motor,LOW);
-  lcd2.write("motor bekapcsolva");
-  break;
-  case 1:
+  lcd2.setCursor(0,0);
+  lcd2.print("motor");
+  lcd2.setCursor(0,1);
+  lcd2.print("bekapcsolva");
+  }
+  else if (motorbekapcsolva==1){
   digitalWrite(motor,HIGH);
-  lcd2.write("motor kikapcsolva");
-  break;
-  }}
-  else if (szenzorok==1){             // mejnenek a szenzorok
+   lcd2.setCursor(0,0);
+  lcd2.print("motor");
+   lcd2.setCursor(0,1);
+  lcd2.print("kikapcsolva");
+  }
+  delay(200);}
+  
+  
+  
+  
+  
+  
+  else if(szenzorok==1){             // mejnenek a szenzorok
   int chk = DHT11.read(DHT11_PIN);
   sensors.requestTemperatures();
   float vizh=sensors.getTempCByIndex(0);
