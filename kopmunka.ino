@@ -184,9 +184,9 @@ void loop(){
   float homerseklet=DHT11.temperature;
   float paratartalom=DHT11.humidity;
   int moisture=analogRead(moisturenumber);                                   // adatok bekérése
-  moisture=1023-moisture;                                                                                
+  moisture=1023-moisture;                            //a moisture szenzorom csökkentette az értéket,ezután növelni kezdte.                                                  
   int light=analogRead(lightnumber);
-  light=1023-light;        // a light resistorjaim fény hatására csökkentették az értéküket,ezután növelni kezdik.
+  light=1023-light;        // a light resistorom fény hatására csökkentette az értéket,ezután növelni kezdte.
   int gomb2=digitalRead(gomb2number);                   //hibaüzenetnél szól a hangszóró,a gomb lenyomásával némíthassuk
   if (gomb2==0){
     if (hang==0){
