@@ -2,10 +2,10 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <DallasTemperature.h>
-#define ONE_WIRE_BUS 11
-#define DHT11_PIN 12
+#define ONE_WIRE_BUS 11                        //viz homerseklet mero
+#define DHT11_PIN 12                           // paratartalom es homerseklet mero
 dht11 DHT11;
-LiquidCrystal_I2C lcd1(0x27,20,4);
+LiquidCrystal_I2C lcd1(0x27,20,4);                 
 LiquidCrystal_I2C lcd2(0x23,16,2);
 
 
@@ -14,32 +14,31 @@ OneWire oneWire(ONE_WIRE_BUS); // Setup a oneWire instance to communicate with a
 // (not just Maxim/Dallas temperature ICs) 
 DallasTemperature sensors(&oneWire);// Pass our oneWire reference to Dallas Temperature. 
 
-int moisturenumber=A5;    //szenzorok számai
+int moisturenumber=A5;    //szenzorok bekotesi szamai
 int lightnumber=A4;
-int gomb;
+int gomb;             //gombok 1 es 0as erteket tarolo varialek
 int gomb2;
 int gomb3;
-int gombnumber=7;        //gombok
+int gombnumber=7;        //gombok bekotesi szamai
 int gomb2number=9;
 int gomb3number=8;
 int hangszoro=6;
-int motor=10;
+int motor=10;           //rele bekotesi szama
 int fhiba;   //fény    // szenzorhibak,hogyha nem megfelelő értéket adnak vissza,akkor az értékük 1es lesz
-int phiba;   //páratartalom
-int hhiba;   //külső hőmérséklet
-int mhiba;   // moisture,föld víztartalma
-int vhiba;   // víz hőmérséklete 
-int allapot=0; // Az lcd-én épp melyik értéket jelenítem meg,gombnyomással nő az értéke 2ig,után kinullázódik.Ha hibajelzés van nincs módunk tovább lépni.
+int phiba;   //páratartalom hiba
+int hhiba;   //levego homerseklet hiba
+int mhiba;   // moisture,föld víztartalma hiba
+int vhiba;   // víz hőmérséklete hiba
+int allapot=0; //gombbal valtoztatom az lcd kijelzeset
 int hang=0;  //Hangszóró értéke
-int case_value;
-int a;
-int szenzorok=1;
-int motorbekapcsolva=1;
-int green=52;
-int red=53;
-void hibak(){
+int case_value;  //kulonbozo hiba kombinaciokra kulonbozo case value erteket add
+int szenzorok=1; //alapbol a szenzorok bevannak kapcsolva
+int motorbekapcsolva=1; //alapbol  a motor nincs bekapcsolva,azert 1 es erteku mivel a rele LOW ertekre kapcsol be
+int green=52; //rgb led zold bekotesi erteke
+int red=53; //rgb led piros bekotesi erteke
+void hibak(){                      //kulon void a hibakra
  
- a=case_value;
+int a=case_value; //ha az a erteke a lefutas utan,nemlesz egyenlo a case value ertekevel ez azt jelenti hogy a case value megvaltozott,igy cleareli a kijelzot
 if(fhiba==1 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){      
     case_value=0;
     }
@@ -101,7 +100,8 @@ if(fhiba==1 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
   
   else{                                          
     case_value=16;}
-  if(case_value!=a){
+  
+ if(case_value!=a){
     lcd2.clear();}
   }
 
@@ -109,18 +109,18 @@ if(fhiba==1 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
 
 
 void setup(){
-  lcd1.init();
+  lcd1.init();            //lcdek bekapcsolasa
   lcd1.backlight();
   lcd2.init();
   lcd2.backlight();               
-  Serial.begin(9600);
-  sensors.begin();   
+  Serial.begin(9600);                
+  sensors.begin();   //vizszenzor elinditisa
   pinMode(hangszoro,OUTPUT);                //hangszóró
-  pinMode(gomb3number,INPUT_PULLUP);
-  pinMode(gomb2number,INPUT_PULLUP);         //hang gomb
-  pinMode(gombnumber,INPUT_PULLUP);         //lcd változtatása
-  pinMode(motor,OUTPUT); //relé
-  pinMode(green,OUTPUT);
+  pinMode(gombnumber,INPUT_PULLUP);         //lcd screenek valtoztatasara hasznalatos gomb
+  pinMode(gomb2number,INPUT_PULLUP);         //hangszoro bekapcsolasa es kikapcsolasa
+  pinMode(gomb3number,INPUT_PULLUP);         //kezi es automatikus vezerles kozti vezerles
+  pinMode(motor,OUTPUT);                    //relé
+  pinMode(green,OUTPUT);                    
   pinMode(red,OUTPUT);}
 
 
