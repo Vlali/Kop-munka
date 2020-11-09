@@ -2,8 +2,8 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <DallasTemperature.h>
-#define ONE_WIRE_BUS 11                        //viz homerseklet mero
-#define DHT11_PIN 12                           // paratartalom es homerseklet mero
+#define ONE_WIRE_BUS 11                        //víz hőmérséklet mérő
+#define DHT11_PIN 12                           //páratartalom és hőmérséklet mérő
 dht11 DHT11;
 LiquidCrystal_I2C lcd1(0x27,20,4);                 
 LiquidCrystal_I2C lcd2(0x23,16,2);
@@ -14,31 +14,31 @@ OneWire oneWire(ONE_WIRE_BUS); // Setup a oneWire instance to communicate with a
 // (not just Maxim/Dallas temperature ICs) 
 DallasTemperature sensors(&oneWire);// Pass our oneWire reference to Dallas Temperature. 
 
-int moisturenumber=A5;    //szenzorok bekotesi szamai
+int moisturenumber=A5;    //szenzorok bekötési számai
 int lightnumber=A4;
-int gomb;             //gombok 1 es 0as erteket tarolo varialek
+int gomb;             //gombok értékét tároló változók
 int gomb2;
 int gomb3;
-int gombnumber=7;        //gombok bekotesi szamai
+int gombnumber=7;        //gombok bekötési számai
 int gomb2number=9;
 int gomb3number=8;
 int hangszoro=6;
-int motor=10;           //rele bekotesi szama
-int fhiba;   //fény    // szenzorhibak,hogyha nem megfelelő értéket adnak vissza,akkor az értékük 1es lesz
+int motor=10;           //relé bekötési száma
+int fhiba;   //fény hiba    // szenzorhibák,hogyha nem megfelelő értéket adnak vissza,akkor az értékük 1es lesz
 int phiba;   //páratartalom hiba
-int hhiba;   //levego homerseklet hiba
-int mhiba;   // moisture,föld víztartalma hiba
-int vhiba;   // víz hőmérséklete hiba
-int allapot=0; //gombbal valtoztatom az lcd kijelzeset
+int hhiba;   //hőmérséklet hiba
+int mhiba;   // moisture,föld víztartalom hiba
+int vhiba;   // víz hőmérséklet hiba
+int allapot=0; //gombbal változtatom a nagy kijelző képernyőjét
 int hang=0;  //Hangszóró értéke
 int case_value;  //kulonbozo hiba kombinaciokra kulonbozo case value erteket add
-int szenzorok=1; //alapbol a szenzorok bevannak kapcsolva
-int motorbekapcsolva=1; //alapbol  a motor nincs bekapcsolva,azert 1 es erteku mivel a rele LOW ertekre kapcsol be
-int green=52; //rgb led zold bekotesi erteke
-int red=53; //rgb led piros bekotesi erteke
-void hibak(){                      //kulon void a hibakra
+int szenzorok=1; //alapból a szenzorok bevannak kapcsolva
+int motorbekapcsolva=1; //alapból  a motor nincs bekapcsolva,azért 1 es értékű mivel a relé LOW értékre kapcsol be
+int green=52; //rgb led zöld bekötési értéke
+int red=53; //rgb led piros bekötési értéke
+void hibak(){                      //külön void a hibákra
  
-int a=case_value; //ha az a erteke a lefutas utan,nemlesz egyenlo a case value ertekevel ez azt jelenti hogy a case value megvaltozott,igy cleareli a kijelzot
+int a=case_value; //ha az a értéke a lefutás után,nemlesz egyenlő a case value értékével ez azt jelenti hogy a case value értéke megváltozott,igy cleareli a kijelzőt
 if(fhiba==1 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){      
     case_value=0;
     }
@@ -109,16 +109,16 @@ if(fhiba==1 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
 
 
 void setup(){
-  lcd1.init();            //lcdek bekapcsolasa
+  lcd1.init();            //kijelzők bekapcsolása
   lcd1.backlight();
   lcd2.init();
   lcd2.backlight();               
   Serial.begin(9600);                
-  sensors.begin();   //vizszenzor elinditisa
+  sensors.begin();   //vízszenzor elindítása
   pinMode(hangszoro,OUTPUT);                //hangszóró
-  pinMode(gombnumber,INPUT_PULLUP);         //lcd screenek valtoztatasara hasznalatos gomb
-  pinMode(gomb2number,INPUT_PULLUP);         //hangszoro bekapcsolasa es kikapcsolasa
-  pinMode(gomb3number,INPUT_PULLUP);         //kezi es automatikus vezerles kozti vezerles
+  pinMode(gombnumber,INPUT_PULLUP);         //lcd kijelzők változtatására használatos gomb
+  pinMode(gomb2number,INPUT_PULLUP);         //hangszóró bekapcsolása es kikapcsolása
+  pinMode(gomb3number,INPUT_PULLUP);         //kézi es automatikus vezérlés közti vezérlés
   pinMode(motor,OUTPUT);                    //relé
   pinMode(green,OUTPUT);                    
   pinMode(red,OUTPUT);}
@@ -132,7 +132,8 @@ void loop(){
     if (szenzorok==0){
       szenzorok=1;}
     else if (szenzorok==1){
-      szenzorok=0;                   //ha kezi vezerlesen van torolje ki az lcdeken levo adatokat,es ne szoljon a hangszoro
+      szenzorok=0;                   //ha kézi vezérlésen van törölje ki a kijelzőkön lévő adatokat,és ne szóljon a hangszóró
+      delay(200);
       }}
   
   
@@ -140,15 +141,16 @@ void loop(){
   if(szenzorok==0){
   
   noTone(hangszoro);
-  int motorvezerlogomb=digitalRead(gombnumber);   //a gombbal variálom hogy a motor be  e legyen kapcsolva
+  int motorvezerlogomb=digitalRead(gombnumber);   //gombbal állítom, hogy a motor be  e legyen kapcsolva
   lcd1.setCursor(0,0);
   lcd1.print("kezi vezerles");
   if (motorvezerlogomb==0){
-    lcd2.clear();               // mivel atlesz irv az lcd hogy menjen e vagy sem
+    lcd2.clear();               // mivel átlesz irva a kijelző, hogy menjen e vagy sem
     if (motorbekapcsolva==0){
-      motorbekapcsolva=1;}          // hogy a motor be e van kapcsolva,gombbal aligatom az ahhoz tartozo variablet
+      motorbekapcsolva=1;}          // hogy a motor be-e van kapcsolva,gombbal állítom az ahhoz tartozó értékeket
     else if (motorbekapcsolva==1){
-      motorbekapcsolva=0;}}
+      motorbekapcsolva=0;
+      delay(200);}}
 
   if (motorbekapcsolva==0){  
   digitalWrite(motor,LOW);
@@ -169,15 +171,15 @@ void loop(){
   lcd2.print("kikapcsolva");
   digitalWrite(green,LOW);
   digitalWrite(red,HIGH);
-  }
-  delay(200);}
+  }}
   
   
   
   
   
   
-  else if(szenzorok==1){             // mejnenek a szenzorok
+  else if(szenzorok==1){             // menjenek a szenzorok
+  motorbekapcsolva=1;                 // hogyha átváltok automatikus vezérlésre miközben megy a motor,akkoris kapcsolja ki a motrot
   int chk = DHT11.read(DHT11_PIN);
   sensors.requestTemperatures();
   float vizh=sensors.getTempCByIndex(0);
@@ -192,7 +194,8 @@ void loop(){
     if (hang==0){
       hang=100;}
     else if (hang==100){
-      hang=0;}}
+      hang=0;
+      delay(200);}}
   
   if (light<980){                         // ha nem megfelelő az érték,akkor a hibánál 1es lesz
     fhiba=0;}
@@ -277,7 +280,7 @@ void loop(){
     case 4:
     
     lcd2.setCursor(0,0);
-    lcd2.print("Nagy a vizho");
+    lcd2.print("Nagy a vizho.");
     lcd2.setCursor(0,1);
     lcd2.print(vizh);
     if (hang==0){noTone(hangszoro);}
@@ -456,7 +459,7 @@ int  gomb=digitalRead(gombnumber);   //a gombbal variálom az állapotokat.
    
   
  
-  if (allapot==0 && fhiba==0 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){     //csak akkor érvényesül ha nincs szükség a hibajelzésre.
+  if (allapot==0){     //A nagy kijelző mit mutasson
    
    lcd1.setCursor(0,0); 
    lcd1.print("Temp:");
@@ -473,7 +476,7 @@ int  gomb=digitalRead(gombnumber);   //a gombbal variálom az állapotokat.
    lcd1.setCursor(0,3);
    lcd1.print(light);}
   
-  else if (allapot==1 && fhiba==0 && hhiba==0 && phiba==0 && mhiba==0 && vhiba==0){
+  else if (allapot==1){
  
     lcd1.setCursor(0,0);
     lcd1.print("Viztartalom");
