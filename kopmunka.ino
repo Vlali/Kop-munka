@@ -11,7 +11,7 @@ OneWire oneWire(ONE_WIRE_BUS);            //vízhőmérséklet mérő szenzor fu
 DallasTemperature sensors(&oneWire);          
 
 int moisturenumber=A5;   //nedvesség érzékelő szenzor bekötési száma
-int lightnumber=A4;      //fotoellenállás bekötési száma
+int lightnumber=A3;      //fotoellenállás bekötési száma
 
                          //gombok értékét tároló változók
 int gomb;                //sárga színű gomb
@@ -133,7 +133,8 @@ void setup(){
   pinMode(gomb3number,INPUT_PULLUP);         
   pinMode(motor,OUTPUT);                //relé
   pinMode(green,OUTPUT);                    
-  pinMode(red,OUTPUT);}
+  pinMode(red,OUTPUT);
+  Serial.begin(9600);}
 
 
 void loop(){
@@ -142,7 +143,8 @@ void loop(){
    lcd1.clear();                       //hogyha átkapcsolok a kijelzők kitörlik a rajtuk lévő adatokat
    lcd2.clear();
     if (szenzorok==0){
-      szenzorok=1;}
+      szenzorok=1;
+      delay(200);}
     else if (szenzorok==1){
       szenzorok=0;                   
       delay(200);
@@ -172,7 +174,7 @@ void loop(){
   lcd2.print("bekapcsolva");
   digitalWrite(red,LOW);
   digitalWrite(green,HIGH);
-  
+  delay(200);
   
   }
   else if (motorbekapcsolva==1){
@@ -183,6 +185,7 @@ void loop(){
   lcd2.print("kikapcsolva");
   digitalWrite(green,LOW);
   digitalWrite(red,HIGH);
+  delay(200);
   }}
   
   
@@ -197,18 +200,19 @@ void loop(){
   float vizhomerseklet=sensors.getTempCByIndex(0);
   float homerseklet=DHT11.temperature;
   float paratartalom=DHT11.humidity;
-  int moisture=analogRead(moisturenumber);                                   // adatok bekérése
-  moisture=1023-moisture;                            //a moisture szenzorom csökkentette az értéket,ezután növelni kezdte.                                                  
+  int moisture=analogRead(moisturenumber)-200;                                   // adatok bekérése                                          
   int light=analogRead(lightnumber);
+  light=1023-light;
   int gomb2=digitalRead(gomb2number);                   //hibaüzenetnél szól a hangszóró,a gomb lenyomásával némíthassuk
   if (gomb2==0){
     if (hang==0){
-      hang=100;}
+      hang=100;
+      delay(100);}
     else if (hang==100){
       hang=0;
-      delay(200);}}
+      delay(100);}}
   
-  if (light<980){                         // ha nem megfelelő az érték,akkor a hibánál 1es lesz
+  if (light<900){                         // ha nem megfelelő az érték,akkor a hibánál 1es lesz
     fhiba=0;}
   else{fhiba=1;}
 
@@ -220,13 +224,14 @@ void loop(){
     phiba=0;}
   else{phiba=1;}
 
-  if (moisture>150){
+  if (moisture<650){
     mhiba=0;}
   else{mhiba=1;}  
  
   if(vizhomerseklet<30.00){
     vhiba=0;}
   else{vhiba=1;}
+  Serial.println(fhiba);
   
   
   hibak();
@@ -468,35 +473,38 @@ void loop(){
   if (allapot==0){     
    
    lcd1.setCursor(0,0); 
-   lcd1.print("Temp:");
-   lcd1.setCursor(9,0);
+   lcd1.print("Homerseklet:");
+   lcd1.setCursor(13,0);
    lcd1.print(homerseklet);
    lcd1.print((char)223);
    lcd1.print("C");
    lcd1.setCursor(0,1);
-   lcd1.print("Humidity:");
+   lcd1.print("Paratartalom:");
    lcd1.print(paratartalom);
    lcd1.print("%");
    lcd1.setCursor(0,2);
    lcd1.print("Fenyerosseg:");
-   lcd1.setCursor(0,3);
-   lcd1.print(light);}
+   lcd1.setCursor(13,2);
+   lcd1.print(light);
+   }
   
   else if (allapot==1){
  
     lcd1.setCursor(0,0);
-    lcd1.print("Viztartalom");
-    lcd1.setCursor(12,0);
+    lcd1.print("Viztartalom:");
+    lcd1.setCursor(13,0);
     lcd1.print(moisture);
     lcd1.setCursor(0,1);
-    lcd1.print("Vizho");
-    lcd1.setCursor(11,1);
+    lcd1.print("Vizho.:");
+    lcd1.setCursor(13,1);
     lcd1.print(vizhomerseklet);
+    lcd1.print((char)223);
+    lcd1.print("C");
     lcd1.setCursor(0,2);
-    lcd1.print("Hangszoro");
-    lcd1.setCursor(0,3);
+    lcd1.print("Hangszoro:");
+    lcd1.setCursor(13,2);
     if (hang==0){
-      lcd1.print("kikapcsolva");}
+      lcd1.print("be");}
     else{
-      lcd1.print("bekapcsolva");}
+      lcd1.print("ki");} 
       }}}
